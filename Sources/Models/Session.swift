@@ -7,7 +7,6 @@
 
 import Foundation
 import TelegramBotSDK
-import GRDB
 
 class Session: Record {
     var chatId: Int64

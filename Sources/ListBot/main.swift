@@ -136,7 +136,7 @@ struct Messages {
     
     static let humHelpMessage = "Гуманітарна допомога для переселенців приймається за адресою: \n<b>м. Ужгород, вул. Ференца Ракоці, 2 («Совине гніздо») - Цілодобовий пункт розподілу населення</b>"
     
-    static let needHumHelpMessage = "Зверніться в <b>Цілодобовий пункт розподілу населення</b> за адресою: \n<b>м. Ужгород, вул. Ференца Ракоці, 2 («Совине гніздо»)</b>"
+    static let needHumHelpMessage = "Зверніться в <b>Цілодобовий координаційний центр Ужгородської міськради</b> за адресою: \n\n<b>м. Ужгород, вул. Ференца Ракоці, 2 («Совине гніздо»)</b> \n\n0312428029\n0312428030\n0312613220\n0509905011\n15-67"
     
     static let moneyRecvisitsMessage = "Дякуємо, ось як ви можете їх пожертвувати: \n\n<b>Готівка приймається за адресою:</b>\nУжгород, вул. Гойди, 8\nРух підтримки закарпатських військових\n\n<b>Безготівкові перерахунки:</b> \n\n<b>Для іноземців</b>: \n\n<b>For cash:</b> \n<b>Name of the bank CB:</b> 1D Hrushevskoho str., Kyiv, 01001, Ukraine \n<b>MFO (Interbranch Turnover)</b> - 305299 \n<b>Recipient</b> - Skunts Mykola (Скунць Микола Петрович)\n<b>IBAN</b> - UA323052990000026201678468315\n<b>Recipient account</b> - 26201678468315\n<b>Currency</b> - UAH\n<b>Taxpayer identification number</b> - 2443402437\n<b>Purpose of payment</b> - money transfer to\nSkunts Mykola \n\n<b>В Україні:</b>\nКартки для грошової допомоги, ПриватБанк і monobank:\n4731 2196 1388 2293\n\n4441 1144 1046 2012\n<b>Отримувач:</b> Скунць Микола Петрович\n\n<b>Кошти із-за кордону USD:\nBeneficiary (Бенефіціар)</b>\n<b>IBAN</b>\nUA 88 322001 00000 2620 5313 7972 08\n<b>Account No</b>\n26205313797208\n<b>Receiver</b>\nYARTSEVA HALYNA, 88005, Ukraine, reg. Zakarpatska, c. Uzhhorod, st. Hulaka-Artemovskoho, build. 14/41, fl. 10\n<b>Account with Institution (Банк Бенефіціара):</b>\nBank JSC UNIVERSAL BANK\n<b>City</b>\nKYIV, UKRAINE\n<b>Swift code</b>\nUNJSUAUKXXX\n<b>Details of payment (Призначення платежу)</b>\nДомомога військовим"
     
@@ -328,7 +328,10 @@ func onSaveToDB(context: Context) throws -> Bool {
 }
 
 func onUnrecogniseCommand(context: Context) throws -> Bool {
-    let session = getSession(for: context.message!.chat)
+    guard let chat = context.message?.chat else {
+        return false
+    }
+    let session = getSession(for: chat)
     if session.isRequestingInfo {
         switch session.inputState {
         case .fio:
@@ -342,9 +345,9 @@ func onUnrecogniseCommand(context: Context) throws -> Bool {
                 session.volounterName = enteredName
             }
             if let _ = session.volounterName {
-                askForPhone(for: context.message?.chat)
+                askForPhone(for: chat)
             } else {
-                sendMessage(to: context.message!.chat, message: "Ваші відомості не містять даних ПІП! Введіть будь-ласка вручну!")
+                sendMessage(to: chat, message: "Ваші відомості не містять даних ПІП! Введіть будь-ласка вручну!")
             }
         case .phone:
             if let contactPhone = context.message?.contact?.phoneNumber {
@@ -353,25 +356,25 @@ func onUnrecogniseCommand(context: Context) throws -> Bool {
                 session.volounterPhone = enteredPhone
             }
             if let _ = session.volounterPhone {
-                askForCity(for: context.message?.chat)
+                askForCity(for: chat)
             } else {
-                sendMessage(to: context.message!.chat, message: "Ваші відомості не містять номеру телефону! Введіть будь-ласка вручну!")
+                sendMessage(to: chat, message: "Ваші відомості не містять номеру телефону! Введіть будь-ласка вручну!")
             }
         case .city:
             session.volounterCity = context.message?.text
             if session.helpType == .car || session.helpType == .truck {
-                askForCarInfo(for: context.message!.chat)
+                askForCarInfo(for: chat)
             } else if let _ = [HelpType.needAmmo, HelpType.needHumHelp, HelpType.needTransport, HelpType.needMedicines, HelpType.needClothes].firstIndex(of: session.helpType) {
-                askForHelpReason(for: context.message!.chat)
+                askForHelpReason(for: chat)
             } else {
-                askForAdditionalComment(for: context.message!.chat)
+                askForAdditionalComment(for: chat)
             }
         case .carType:
             session.carInfo = context.message?.text
-            askForAdditionalCarInfo(for: context.message!.chat)
+            askForAdditionalCarInfo(for: chat)
         case .comment:
             session.additionalComment = context.message?.text
-            sendConfimMessage(to: context.message!.chat, session: session)
+            sendConfimMessage(to: chat, session: session)
         }
         return true
     }
