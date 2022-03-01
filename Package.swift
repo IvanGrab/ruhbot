@@ -16,8 +16,5 @@ let package = Package(
         .target(
             name: "ListBot",
             dependencies: ["TelegramBotSDK"]),
-        .testTarget(
-            name: "ListBotTests",
-            dependencies: ["ListBot"]),
     ]
 )
