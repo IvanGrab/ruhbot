@@ -454,6 +454,8 @@ func sendToDB(session: Session, context: Context) {
     if let _ = [HelpType.needAmmo, HelpType.needHumHelp, HelpType.needTransport, HelpType.needMedicines, HelpType.needClothes].firstIndex(of: session.helpType) {
         path = "bot/help-request"
     }
+    
+    let request = Perfect
     var request = URLRequest(url: URL(string: "https://plastic-fox-60.loca.lt/" + path)!)
     request.addValue("Bearer b7e6abddeb810910075037bf939d7a47f928f961c4778cc6cc0780ee7f3c4479", forHTTPHeaderField: "Authorization")
     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -472,10 +474,13 @@ func sendToDB(session: Session, context: Context) {
         "helpType": session.helpType?.rawValue ?? "",
         "comment": comment
     ]
+    
     let data = try! JSONSerialization.data(withJSONObject: json, options: .fragmentsAllowed)
     request.httpBody = data
     print("URL: ", request.url!)
     print("BODY: ", json)
+    
+    
     NSURLConnection.sendAsynchronousRequest(request, queue: OperationQueue.main) { response, data, error in
         if let httpResponse = response as? HTTPURLResponse {
             print("STATUS CODE: ", httpResponse.statusCode)
