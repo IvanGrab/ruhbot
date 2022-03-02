@@ -1,4 +1,6 @@
 import Foundation
+import CCurl
+import RequestSwift
 import TelegramBotSDK
 
 enum HelpType: String {
@@ -145,7 +147,7 @@ struct Messages {
 }
 
 
-let token = "5241930557:AAFmUeZpcfDbpk6N7bycOrjabSpzbxcLr78"
+let token = "5123960047:AAHw4y-9PD4owkur2cgxaYdzb8v1yzLPNwo"
 let bot = TelegramBot(token: token)
 
 func getSession(for chat: Chat) -> Session {
@@ -463,17 +465,16 @@ func sendToDB(session: Session, context: Context) {
     if let _ = [HelpType.needAmmo, HelpType.needHumHelp, HelpType.needTransport, HelpType.needMedicines, HelpType.needClothes].firstIndex(of: session.helpType) {
         path = "bot/help-request"
     }
-    var request = URLRequest(url: URL(string: "http://ruhpidtrymky-env.eba-3nexsm5k.eu-central-1.elasticbeanstalk.com/" + path)!)
-    request.addValue("Bearer b7e6abddeb810910075037bf939d7a47f928f961c4778cc6cc0780ee7f3c4479", forHTTPHeaderField: "Authorization")
-    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.httpMethod = "POST"
+//    var request = URLRequest(url: URL(string: "http://ruhpidtrymky-env.eba-3nexsm5k.eu-central-1.elasticbeanstalk.com/" + path)!)
+//    request.addValue("Bearer b7e6abddeb810910075037bf939d7a47f928f961c4778cc6cc0780ee7f3c4479", forHTTPHeaderField: "Authorization")
+//    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+//    request.httpMethod = "POST"
     var comment = ""
     if session.helpType == .car || session.helpType == .truck {
         comment = "Автомобіль: "
         comment += "\n" + (session.carInfo ?? "") + "\n"
     }
     comment += (session.additionalComment ?? "")
-    
     let json = [
         "pib": session.volounterName,
         "location": session.volounterCity,
@@ -483,29 +484,44 @@ func sendToDB(session: Session, context: Context) {
     ]
     
     let data = try! JSONSerialization.data(withJSONObject: json, options: .fragmentsAllowed)
-    request.httpBody = data
-    print("URL: ", request.url!)
-    print("BODY: ", json)
-    
-    
-    NSURLConnection.sendAsynchronousRequest(request, queue: OperationQueue.main) { response, data, error in
-        if let httpResponse = response as? HTTPURLResponse {
-            print("STATUS CODE: ", httpResponse.statusCode)
-            print("ERROD: ", error?.localizedDescription)
-            let json = try! JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed)
-            print("DATA: ", json)
-            if httpResponse.statusCode >= 200 && httpResponse.statusCode < 400 {
-                if let _ = [HelpType.needAmmo, HelpType.needHumHelp, HelpType.needTransport, HelpType.needMedicines, HelpType.needClothes].firstIndex(of: session.helpType) {
-                    sendSuccessHelpMessage(context: context)
-                } else {
-                    sendSuccessVolountersMessage(context: context)
-                }
-                resetSession(for: context)
+    let requestT = Request(method: .post, url: "https://tough-ladybug-41.loca.lt/" + path, headers: ["Authorization" : "Bearer b7e6abddeb810910075037bf939d7a47f928f961c4778cc6cc0780ee7f3c4479", "Content-Type" : "application/json"], body: [UInt8](data))
+    let requester = Requester(request: requestT, queue: .main, timeout: 9000, proxy: nil)
+    requester.handler = { (response, error) in
+        if (response?.statusCode ?? 0) >= 200 && (response?.statusCode ?? 0) < 400 {
+            if let _ = [HelpType.needAmmo, HelpType.needHumHelp, HelpType.needTransport, HelpType.needMedicines, HelpType.needClothes].firstIndex(of: session.helpType) {
+                sendSuccessHelpMessage(context: context)
             } else {
-                sendFallBackMessage(to: context.message!.chat)
+                sendSuccessVolountersMessage(context: context)
             }
+            resetSession(for: context)
+        } else {
+            sendFallBackMessage(to: context.message!.chat)
         }
     }
+    requester.startAsync()
+//    request.httpBody = data
+//    print("URL: ", request.url!)
+//    print("BODY: ", json)
+    
+    
+//    NSURLConnection.sendAsynchronousRequest(request, queue: OperationQueue.main) { response, data, error in
+//        if let httpResponse = response as? HTTPURLResponse {
+//            print("STATUS CODE: ", httpResponse.statusCode)
+//            print("ERROD: ", error?.localizedDescription)
+//            let json = try! JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed)
+//            print("DATA: ", json)
+//            if httpResponse.statusCode >= 200 && httpResponse.statusCode < 400 {
+//                if let _ = [HelpType.needAmmo, HelpType.needHumHelp, HelpType.needTransport, HelpType.needMedicines, HelpType.needClothes].firstIndex(of: session.helpType) {
+//                    sendSuccessHelpMessage(context: context)
+//                } else {
+//                    sendSuccessVolountersMessage(context: context)
+//                }
+//                resetSession(for: context)
+//            } else {
+//                sendFallBackMessage(to: context.message!.chat)
+//            }
+//        }
+//    }
     
 }
 
