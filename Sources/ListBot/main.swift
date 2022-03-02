@@ -86,6 +86,7 @@ struct Strings {
     static let iNeedClothes = "Військовий одяг"
     static let iNeedTransport = "Транспорт"
     static let iNeedHumHelp = "Гуманітарна допомога"
+    static let skipComment = "Пропустити"
 }
 
 struct Commands {
@@ -113,7 +114,7 @@ struct Messages {
     
     static let clothesInfo = "<i>Приймається за адресою:</i> <b>\nУжгород, вул. Гойди, 8\nРух підтримки закарпатських військових\n\n</b><i>Ось що потрібно:</i> \n<b>-гірське взуття</b>\n<b>-термобілизна</b>\n<b>-спортивні утеплені штани</b>\n<b>-теплі куртки темного кольору/хакі</b>\n<b>-флісові светри</b>\n<b>-рукавиці</b>\n<b>-налобні ліхтарики</b>\n<b>-каремати</b>\n<b>-наколінники</b>\n<b>-спальники</b>\n<b>-бокси для індивідуальних аптечок (порожні)</b>\n<b>-аптечки (індивідуальні) повні</b>\n<b>-бафи</b>"
         
-    static let askForFio = "Будь-ласка, введіть <b>ПІП</b>, або надайте доступ (якщо вони привязані до акаунта)."
+    static let askForFio = "Будь-ласка, введіть <b>ПІБ</b>, або надайте доступ (якщо вони привязані до акаунта)."
     static let askForPhone = "Будь-ласка, введіть <b>номер телефону</b>, або надайте доступ (якщо він вказаний в акаунті)."
     static let askForСity = "Будь-ласка, введіть <b>місто знаходження</b>."
     static let askForCarType = "Будь-ласка, введіть <b>марку та модель вашого авто</b>."
@@ -131,8 +132,8 @@ struct Messages {
     static let whatHelpTypeDoYouNeed = "Оберіть категорію допомоги: "
     static let whatHelpDoYouNeed = "Опишіть проблему яка виникла! <b>Одним повідомленням</b>"
     static let whatHelpDoYouCanProceed = "Опишіть чим ви можете допомогти! <b>Одним повідомленням</b>"
-    static let finishedMessageFormat = "<b>%@</b>, ми внесли Вас в базу, за потреби сконтактуємось. Дякуємо за виявлене бажання, ми це дуже цінуємо! \n\nТакож слідкуйте за чатом та зголошуйтесь за потреби. \n\nПосилання на чат: https://t.me/ruxpidtrymky"
-    static let finishedHelpMessageFormat = "<b>%@</b>, ми внесли Вас в базу, та якнайскоріше звяжемося з вами для надання допомоги! \n\nТакож слідкуйте за чатом та зголошуйтесь за потреби. \n\nПосилання на чат: https://t.me/ruxpidtrymky"
+    static let finishedMessageFormat = "<b>%@</b>, ми внесли Вас в базу, за потреби сконтактуємось. Дякуємо за виявлене бажання, ми це дуже цінуємо! \n\nТакож слідкуйте за новинами у спільнові. \n\nПосилання на спільноту: https://t.me/+hBDom9JohiZjZTU6"
+    static let finishedHelpMessageFormat = "<b>%@</b>, ми внесли Вас в базу, та якнайскоріше звяжемося з вами для надання допомоги! \n\nТакож слідкуйте за новинами у спільнові. \n\nПосилання на спільноту: https://t.me/+hBDom9JohiZjZTU6"
     
     static let humHelpMessage = "Гуманітарна допомога для переселенців приймається за адресою: \n<b>м. Ужгород, вул. Ференца Ракоці, 2 («Совине гніздо») - Цілодобовий пункт розподілу населення</b>"
     
@@ -140,7 +141,7 @@ struct Messages {
     
     static let moneyRecvisitsMessage = "Дякуємо, ось як ви можете їх пожертвувати: \n\n<b>Готівка приймається за адресою:</b>\nУжгород, вул. Гойди, 8\nРух підтримки закарпатських військових\n\n<b>Безготівкові перерахунки:</b> \n\n<b>Для іноземців</b>: \n\n<b>For cash:</b> \n<b>Name of the bank CB:</b> 1D Hrushevskoho str., Kyiv, 01001, Ukraine \n<b>MFO (Interbranch Turnover)</b> - 305299 \n<b>Recipient</b> - Skunts Mykola (Скунць Микола Петрович)\n<b>IBAN</b> - UA323052990000026201678468315\n<b>Recipient account</b> - 26201678468315\n<b>Currency</b> - UAH\n<b>Taxpayer identification number</b> - 2443402437\n<b>Purpose of payment</b> - money transfer to\nSkunts Mykola \n\n<b>В Україні:</b>\nКартки для грошової допомоги, ПриватБанк і monobank:\n4731 2196 1388 2293\n\n4441 1144 1046 2012\n<b>Отримувач:</b> Скунць Микола Петрович\n\n<b>Кошти із-за кордону USD:\nBeneficiary (Бенефіціар)</b>\n<b>IBAN</b>\nUA 88 322001 00000 2620 5313 7972 08\n<b>Account No</b>\n26205313797208\n<b>Receiver</b>\nYARTSEVA HALYNA, 88005, Ukraine, reg. Zakarpatska, c. Uzhhorod, st. Hulaka-Artemovskoho, build. 14/41, fl. 10\n<b>Account with Institution (Банк Бенефіціара):</b>\nBank JSC UNIVERSAL BANK\n<b>City</b>\nKYIV, UKRAINE\n<b>Swift code</b>\nUNJSUAUKXXX\n<b>Details of payment (Призначення платежу)</b>\nДомомога військовим"
     
-    static let thanksFooter = "\n\nДякуємо за виявлене бажання, ми це дуже цінуємо! \n\nТакож слідкуйте за чатом та зголошуйтесь за потреби. \n\nПосилання на чат: https://t.me/ruxpidtrymky"
+    static let thanksFooter = "\n\nДякуємо за виявлене бажання, ми це дуже цінуємо! \n\nТакож слідкуйте за новинами у спільнові. \n\nПосилання на спільноту: https://t.me/+hBDom9JohiZjZTU6"
 }
 
 
@@ -188,7 +189,7 @@ let router = Router(bot: bot) { router in
     router[Strings.iNeedClothes] = onNeedClothesHelp
     router[Strings.iNeedTransport] = onNeedTransportHelp
     router[Strings.iNeedHumHelp] = onNeedHumHelp
-    
+    router[Strings.skipComment] = onSkipComment
     router.unmatched = onUnrecogniseCommand
     router.unsupportedContentType = onUnrecogniseCommand
 }
@@ -316,8 +317,16 @@ func onOtheHelp(context: Context) throws -> Bool {
 }
 
 func onEnterInfoAgain(context: Context) throws -> Bool {
-    let currentSession = getSession(for: context.message!.chat)
-    initiateContactInfoRequestForVolounterType(type: currentSession.helpType!, for: context.message!.chat)
+    guard let chat = context.message?.chat else { return false }
+    let currentSession = getSession(for: chat)
+    initiateContactInfoRequestForVolounterType(type: currentSession.helpType ?? .other, for: chat)
+    return true
+}
+
+func onSkipComment(context: Context) throws -> Bool {
+    guard let chat = context.message?.chat else { return false }
+    let currentSession = getSession(for: chat)
+    sendConfimMessage(to: chat, session: currentSession)
     return true
 }
 
@@ -433,7 +442,7 @@ func askForAdditionalComment(for toChat: Chat?) {
     let session = getSession(for: chat)
     session.isRequestingInfo = true
     session.inputState = .comment
-    bot.sendMessageAsync(chatId: .chat(chat.id), text: Messages.askForAdditionalComment, parseMode: .html, replyMarkup: removeKeyboardReply())
+    bot.sendMessageAsync(chatId: .chat(chat.id), text: Messages.askForAdditionalComment, parseMode: .html, replyMarkup: skipMarkup)
 }
 
 func askForHelpReason(for toChat: Chat?) {
@@ -454,16 +463,16 @@ func sendToDB(session: Session, context: Context) {
     if let _ = [HelpType.needAmmo, HelpType.needHumHelp, HelpType.needTransport, HelpType.needMedicines, HelpType.needClothes].firstIndex(of: session.helpType) {
         path = "bot/help-request"
     }
-    var request = URLRequest(url: URL(string: "https://plastic-fox-60.loca.lt/" + path)!)
+    var request = URLRequest(url: URL(string: "http://ruhpidtrymky-env.eba-3nexsm5k.eu-central-1.elasticbeanstalk.com/" + path)!)
     request.addValue("Bearer b7e6abddeb810910075037bf939d7a47f928f961c4778cc6cc0780ee7f3c4479", forHTTPHeaderField: "Authorization")
     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "POST"
     var comment = ""
     if session.helpType == .car || session.helpType == .truck {
         comment = "Автомобіль: "
-        comment += "\n" + (session.carInfo ?? "")
+        comment += "\n" + (session.carInfo ?? "") + "\n"
     }
-    comment += "\n" + (session.additionalComment ?? "")
+    comment += (session.additionalComment ?? "")
     
     let json = [
         "pib": session.volounterName,
@@ -502,6 +511,10 @@ func sendToDB(session: Session, context: Context) {
 let askContactInfo = [
     [KeyboardButton(text: Strings.giveContactInfo, requestContact: true)]
 ]
+
+let skipMarkup: ReplyMarkup = {
+    return ReplyMarkup.replyKeyboardMarkup(ReplyKeyboardMarkup.init(keyboard: [[KeyboardButton(text: Strings.skipComment)]], resizeKeyboard: true, oneTimeKeyboard: true, selective: true))
+}()
 
 let askHelpTypeRequestMarkup: ReplyMarkup = {
     return ReplyMarkup.replyKeyboardMarkup(ReplyKeyboardMarkup.init(keyboard: [[KeyboardButton(text: Strings.iAmMilitary), KeyboardButton(text: Strings.iAmСivil)]], resizeKeyboard: true, oneTimeKeyboard: true, selective: true))
