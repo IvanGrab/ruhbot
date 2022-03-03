@@ -276,14 +276,14 @@ struct Messages {
     static let noAnswer = "<b><i>-РУСКІЙ КОРАБЛЬ! ІДИ НАХ*Й!</i></b>"
     static let yesAnswer = "Виберіть категорію в якій маєте можливість допомогти!"
     
-    static let unrecogniseMessageFormat = "<b>%@</b>, будь ласка слідуйте інструкціям, або розпочніть з початку!"
+    static let unrecogniseMessageFormat = "Будь ласка слідуйте інструкціям, або розпочніть з початку!"
     static let whatCanYouHelpMessage = "Чим ви можете допомогти?"
     static let whoYouAre = "Оберіть свій статус: "
     static let whatHelpTypeDoYouNeed = "Оберіть категорію допомоги: "
     static let whatHelpDoYouNeed = "Опишіть проблему яка виникла! <b>Одним повідомленням</b>"
     static let whatHelpDoYouCanProceed = "Опишіть чим ви можете допомогти! <b>Одним повідомленням</b>"
-    static let finishedMessageFormat = "<b>%@</b>, ми внесли Вас в базу, за потреби сконтактуємось. Дякуємо за виявлене бажання, ми це дуже цінуємо! \n\nТакож слідкуйте за новинами у спільнові. \n\nПосилання на спільноту: https://t.me/+hBDom9JohiZjZTU6"
-    static let finishedHelpMessageFormat = "<b>%@</b>, ми внесли Вас в базу, та якнайскоріше звяжемося з вами для надання допомоги! \n\nТакож слідкуйте за новинами у спільнові. \n\nПосилання на спільноту: https://t.me/+hBDom9JohiZjZTU6"
+    static let finishedMessageFormat = "Mи внесли Вас в базу, за потреби сконтактуємось. Дякуємо за виявлене бажання, ми це дуже цінуємо! \n\nТакож слідкуйте за новинами у спільнові. \n\nПосилання на спільноту: https://t.me/+hBDom9JohiZjZTU6"
+    static let finishedHelpMessageFormat = "Ми внесли Вас в базу, та якнайскоріше звяжемося з вами для надання допомоги! \n\nТакож слідкуйте за новинами у спільнові. \n\nПосилання на спільноту: https://t.me/+hBDom9JohiZjZTU6"
     
     static let humHelpMessage = "Гуманітарна допомога для переселенців приймається за адресою: \n<b>м. Ужгород, вул. Ференца Ракоці, 2 («Совине гніздо») - Цілодобовий пункт розподілу населення</b>"
     
@@ -358,7 +358,7 @@ func onStart(context: Context) throws -> Bool {
     } else if let userNick = context.message?.from?.username {
         userName = userNick
     }
-    context.respondAsync(String(format: Messages.greatingMessageFormat, arguments: userName), parseMode: .html, replyMarkup: bottomMenu)
+    context.respondAsync(Messages.greatingMessageFormat, parseMode: .html, replyMarkup: bottomMenu)
     return true
 }
 
