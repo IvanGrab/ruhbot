@@ -358,7 +358,7 @@ func onStart(context: Context) throws -> Bool {
     } else if let userNick = context.message?.from?.username {
         userName = userNick
     }
-    context.respondAsync(Messages.greatingMessageFormat, parseMode: .html, replyMarkup: bottomMenu)
+    context.respondAsync(String(format: Messages.greatingMessageFormat, arguments: userName), parseMode: .html, replyMarkup: bottomMenu)
     return true
 }
 
