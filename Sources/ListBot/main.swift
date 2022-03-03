@@ -757,7 +757,7 @@ func sendGreating(to chat: Chat) {
     } else if let userNick = chat.username {
         userName = userNick
     }
-    bot.sendMessageSync(chatId: .chat(chat.id), text: String(format: Messages.greatingMessageFormat, userName), parseMode: .html)
+    bot.sendMessageSync(chatId: .chat(chat.id), text: Messages.greatingMessageFormat, parseMode: .html)
 }
 
 func sendUnrecogniseMessage(to chat: Chat) {
@@ -767,7 +767,7 @@ func sendUnrecogniseMessage(to chat: Chat) {
     } else if let userNick = chat.username {
         userName = userNick
     }
-    bot.sendMessageSync(chatId: .chat(chat.id), text: String(format: Messages.unrecogniseMessageFormat, userName), parseMode: .html, replyMarkup: reStartButtonsMarkup)
+    bot.sendMessageSync(chatId: .chat(chat.id), text: Messages.unrecogniseMessageFormat, parseMode: .html, replyMarkup: reStartButtonsMarkup)
 }
 
 func sendConfimMessage(to chat: Chat, session: Session) {
