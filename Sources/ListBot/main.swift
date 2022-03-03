@@ -41,7 +41,7 @@ internal typealias DataTaskCompletion = (_ statusCode: Int?, _ error: DataTaskEr
 public typealias RequestParameters = [String: Encodable?]
 
 class Session {
-    let url = "https://hot-husky-29.loca.lt"
+    let url = "https://korabel.rukhpidtrymky.org.ua"
     let sessionId: String
     
     var isRequestingInfo = false
@@ -295,7 +295,9 @@ struct Messages {
 }
 
 
-let token = "5123960047:AAHw4y-9PD4owkur2cgxaYdzb8v1yzLPNwo"
+//let tokenDev = "5123960047:AAHw4y-9PD4owkur2cgxaYdzb8v1yzLPNwo"
+let token = "5241930557:AAFmUeZpcfDbpk6N7bycOrjabSpzbxcLr78"
+
 let bot = TelegramBot(token: token)
 
 func getSession(for chat: Chat) -> Session {
