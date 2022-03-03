@@ -358,7 +358,7 @@ func onStart(context: Context) throws -> Bool {
     } else if let userNick = context.message?.from?.username {
         userName = userNick
     }
-    context.respondAsync(String(format: Messages.greatingMessageFormat, userName), parseMode: .html, replyMarkup: bottomMenu)
+    context.respondAsync(Messages.greatingMessageFormat, parseMode: .html, replyMarkup: bottomMenu)
     return true
 }
 
@@ -801,7 +801,7 @@ func sendSuccessVolountersMessage(context: Context) {
     } else if let userNick = context.message?.from?.username {
         userName = userNick
     }
-    context.respondAsync(String(format: Messages.finishedMessageFormat, userName), parseMode: .html, replyMarkup: reStartButtonsMarkup)
+    context.respondAsync(Messages.finishedHelpMessageFormat, parseMode: .html, replyMarkup: reStartButtonsMarkup)
 }
 
 func sendSuccessHelpMessage(context: Context) {
@@ -811,7 +811,7 @@ func sendSuccessHelpMessage(context: Context) {
     } else if let userNick = context.message?.from?.username {
         userName = userNick
     }
-    context.respondAsync(String(format: Messages.finishedHelpMessageFormat, userName), parseMode: .html, replyMarkup: reStartButtonsMarkup)
+    context.respondAsync(Messages.finishedHelpMessageFormat, parseMode: .html, replyMarkup: reStartButtonsMarkup)
 }
 
 
