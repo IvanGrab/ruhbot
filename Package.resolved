@@ -2,24 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "RequestSwift",
-        "repositoryURL": "https://github.com/BiAtoms/Request.swift.git",
-        "state": {
-          "branch": null,
-          "revision": "47cea3de9cb961f77c659a27894d32454b42e25f",
-          "version": "2.3.0"
-        }
-      },
-      {
-        "package": "SocketSwift",
-        "repositoryURL": "https://github.com/BiAtoms/Socket.swift.git",
-        "state": {
-          "branch": null,
-          "revision": "36911c13adfe12859ed43dcba878052b1897fcd3",
-          "version": "2.4.0"
-        }
-      },
-      {
         "package": "TelegramBotSDK",
         "repositoryURL": "https://github.com/zmeyc/telegram-bot-swift.git",
         "state": {

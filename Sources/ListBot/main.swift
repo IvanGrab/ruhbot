@@ -1,7 +1,27 @@
 import Foundation
+import Dispatch
 import CCurl
-import RequestSwift
 import TelegramBotSDK
+
+class WriteCallbackData {
+    var data = Data()
+}
+
+public struct Response<T: Decodable>: Decodable {
+    
+    /// If `ok` equals true, the request was successful and the result of the query can be found in the `result` field. In case of an unsuccessful request, ‘ok’ equals false and the error is explained in the ‘errorDescription’.
+    public var ok: Bool
+    /// *Optional.* Error description.
+    public var description: String?
+    /// *Optional.* Error code. Its contents are subject to change in the future.
+    public var errorCode: Int?
+    /// *Optional.* Result.
+    internal var result: T?
+}
+
+struct Res: Decodable {
+    
+}
 
 enum HelpType: String {
     case freeHand = "free-hands"
@@ -16,7 +36,12 @@ enum HelpType: String {
     case needHumHelp = "hum-help"
 }
 
+internal typealias DataTaskCompletion = (_ statusCode: Int?, _ error: DataTaskError?)->()
+
+public typealias RequestParameters = [String: Encodable?]
+
 class Session {
+    let url = "https://hot-husky-29.loca.lt"
     let sessionId: String
     
     var isRequestingInfo = false
@@ -48,6 +73,132 @@ class Session {
         carInfo = nil
         helpType = nil
         additionalComment = nil
+    }
+    
+    internal func startDataTaskForEndpoint<T: Decodable>(_ endpoint: String, parameters: [String: Encodable?], resultType: T.Type, completion: @escaping DataTaskCompletion) {
+        let endpointUrl = urlForEndpoint(endpoint)
+        
+        // If parameters contain values of type InputFile, use  multipart/form-data for sending them.
+        var hasAttachments = false
+        for valueOrNil in parameters.values {
+            guard let value = valueOrNil else { continue }
+            
+            if value is InputFile {
+                hasAttachments = true
+                break
+            }
+            
+            if let inputFileOrString = value as? InputFileOrString {
+                if case .inputFile = inputFileOrString {
+                    hasAttachments = true
+                    break
+                }
+            }
+        }
+        
+        let contentType = "application/json"
+        let requestDataOrNil: Data? = try? JSONSerialization.data(withJSONObject: parameters, options: .fragmentsAllowed)
+        guard let requestData = requestDataOrNil else {
+            completion(nil, .invalidRequest)
+            return
+        }
+        // -1 for '\0'
+        let byteCount = requestData.count
+        
+        DispatchQueue.global().async {
+            self.curlPerformRequest(endpointUrl: endpointUrl, contentType: contentType, resultType: resultType, requestBytes: [UInt8](requestData), byteCount: byteCount, completion: completion)
+        }
+    }
+    
+    private func curlPerformRequest<T: Decodable>(endpointUrl: URL, contentType: String, resultType: T.Type, requestBytes: UnsafePointer<UInt8>, byteCount: Int, completion: @escaping DataTaskCompletion) {
+        var callbackData = WriteCallbackData()
+        
+        guard let curl = curl_easy_init() else {
+            completion(nil, .libcurlInitError)
+            return
+        }
+        defer { curl_easy_cleanup(curl) }
+        
+        curl_easy_setopt_string(curl, CURLOPT_URL, endpointUrl.absoluteString)
+        //curl_easy_setopt_int(curl, CURLOPT_SAFE_UPLOAD, 1)
+        curl_easy_setopt_int(curl, CURLOPT_POST, 1)
+        curl_easy_setopt_binary(curl, CURLOPT_POSTFIELDS, requestBytes)
+        curl_easy_setopt_int(curl, CURLOPT_POSTFIELDSIZE, Int32(byteCount))
+        
+        var headers: UnsafeMutablePointer<curl_slist>? = nil
+        headers = curl_slist_append(headers, "Content-Type: \(contentType)")
+        headers = curl_slist_append(headers, "Authorization: Bearer b7e6abddeb810910075037bf939d7a47f928f961c4778cc6cc0780ee7f3c4479")
+        curl_easy_setopt_slist(curl, CURLOPT_HTTPHEADER, headers)
+        defer { curl_slist_free_all(headers) }
+        
+        let writeFunction: curl_write_callback = { (ptr, size, nmemb, userdata) -> Int in
+            let count = size * nmemb
+            if let writeCallbackDataPointer = userdata?.assumingMemoryBound(to: WriteCallbackData.self) {
+                let writeCallbackData = writeCallbackDataPointer.pointee
+                ptr?.withMemoryRebound(to: UInt8.self, capacity: count) {
+                    writeCallbackData.data.append(&$0.pointee, count: count)
+                }
+            }
+            return count
+        }
+        curl_easy_setopt_write_function(curl, CURLOPT_WRITEFUNCTION, writeFunction)
+        curl_easy_setopt_pointer(curl, CURLOPT_WRITEDATA, &callbackData)
+        //curl_easy_setopt_int(curl, CURLOPT_VERBOSE, 1)
+        let code = curl_easy_perform(curl)
+        guard code == CURLE_OK else {
+            reportCurlError(code: code, completion: completion)
+            return
+        }
+        
+        let result = String(data: callbackData.data, encoding: .utf8)
+        print("CURLcode=\(code.rawValue) result=\(result.unwrapOptional)")
+        
+        guard code != CURLE_ABORTED_BY_CALLBACK else {
+            completion(nil, .libcurlAbortedByCallback)
+            return
+        }
+        
+        var httpCode: Int = 0
+        guard CURLE_OK == curl_easy_getinfo_long(curl, CURLINFO_RESPONSE_CODE, &httpCode) else {
+            reportCurlError(code: code, completion: completion)
+            return
+        }
+        let data = callbackData.data
+        let decoder = JSONDecoder()
+        let json = try! JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+        
+        
+        guard httpCode >= 200 && httpCode <= 400  else {
+            completion(nil,
+                       .invalidStatusCode(
+                        statusCode: httpCode,
+                        telegramDescription: "",
+                        telegramErrorCode: -1,
+                        data: data)
+            )
+            return
+        }
+        
+        guard !data.isEmpty else {
+            completion(nil, .noDataReceived)
+            return
+        }
+        
+        completion(httpCode, nil)
+    }
+    
+    private func reportCurlError(code: CURLcode, completion: @escaping DataTaskCompletion) {
+        let failReason = String(cString: curl_easy_strerror(code), encoding: .utf8) ?? "unknown error"
+        //print("Request failed: \(failReason)")
+        completion(nil, .libcurlError(code: code, description: failReason))
+    }
+    
+    private func urlForEndpoint(_ endpoint: String) -> URL {
+        let urlString = "\(url)/\(endpoint)"
+        guard let result = URL(string: urlString) else {
+            fatalError("Invalid URL: \(urlString)")
+        }
+        return result
     }
 
 }
@@ -483,11 +634,8 @@ func sendToDB(session: Session, context: Context) {
         "comment": comment
     ]
     
-    let data = try! JSONSerialization.data(withJSONObject: json, options: .fragmentsAllowed)
-    let requestT = Request(method: .post, url: "https://tough-ladybug-41.loca.lt/" + path, headers: ["Authorization" : "Bearer b7e6abddeb810910075037bf939d7a47f928f961c4778cc6cc0780ee7f3c4479", "Content-Type" : "application/json"], body: [UInt8](data))
-    let requester = Requester(request: requestT, queue: .main, timeout: 9000, proxy: nil)
-    requester.handler = { (response, error) in
-        if (response?.statusCode ?? 0) >= 200 && (response?.statusCode ?? 0) < 400 {
+    session.startDataTaskForEndpoint(path, parameters: json, resultType: Res.self) { result, error in
+        if let resultCode = result, resultCode >= 200 && resultCode < 400 {
             if let _ = [HelpType.needAmmo, HelpType.needHumHelp, HelpType.needTransport, HelpType.needMedicines, HelpType.needClothes].firstIndex(of: session.helpType) {
                 sendSuccessHelpMessage(context: context)
             } else {
@@ -498,7 +646,23 @@ func sendToDB(session: Session, context: Context) {
             sendFallBackMessage(to: context.message!.chat)
         }
     }
-    requester.startAsync()
+    
+//    let data = try! JSONSerialization.data(withJSONObject: json, options: .fragmentsAllowed)
+//    let requestT = Request(method: .post, url: "https://tough-ladybug-41.loca.lt/" + path, headers: ["Authorization" : "Bearer b7e6abddeb810910075037bf939d7a47f928f961c4778cc6cc0780ee7f3c4479", "Content-Type" : "application/json"], body: [UInt8](data))
+//    let requester = Requester(request: requestT, queue: .main, timeout: 9000, proxy: nil)
+//    requester.handler = { (response, error) in
+//        if (response?.statusCode ?? 0) >= 200 && (response?.statusCode ?? 0) < 400 {
+//            if let _ = [HelpType.needAmmo, HelpType.needHumHelp, HelpType.needTransport, HelpType.needMedicines, HelpType.needClothes].firstIndex(of: session.helpType) {
+//                sendSuccessHelpMessage(context: context)
+//            } else {
+//                sendSuccessVolountersMessage(context: context)
+//            }
+//            resetSession(for: context)
+//        } else {
+//            sendFallBackMessage(to: context.message!.chat)
+//        }
+//    }
+//    requester.startAsync()
 //    request.httpBody = data
 //    print("URL: ", request.url!)
 //    print("BODY: ", json)
