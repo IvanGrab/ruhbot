@@ -164,9 +164,6 @@ class Session {
             return
         }
         let data = callbackData.data
-        let decoder = JSONDecoder()
-        let json = try! JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
-        
         
         guard httpCode >= 200 && httpCode <= 400  else {
             completion(nil,
@@ -355,7 +352,13 @@ func onStart(context: Context) throws -> Bool {
     let keyboardMarkup = ReplyKeyboardMarkup.init(keyboard: startButtonsMarkup, resizeKeyboard: true, oneTimeKeyboard: false, selective: true)
     let bottomMenu = ReplyMarkup.replyKeyboardMarkup(keyboardMarkup)
     resetSession(for: context)
-    context.respondAsync(String(format: Messages.greatingMessageFormat, context.message?.from?.firstName ?? context.message?.from?.username ?? "шановний"), parseMode: .html, replyMarkup: bottomMenu)
+    var userName = "шановний"
+    if let firstName = context.message?.from?.firstName {
+        userName = firstName
+    } else if let userNick = context.message?.from?.username {
+        userName = userNick
+    }
+    context.respondAsync(String(format: Messages.greatingMessageFormat, userName), parseMode: .html, replyMarkup: bottomMenu)
     return true
 }
 
@@ -748,11 +751,23 @@ func sendFallBackMessage(to chat: Chat, message: String = "Упс, щось пі
 }
 
 func sendGreating(to chat: Chat) {
-    bot.sendMessageSync(chatId: .chat(chat.id), text: String(format: Messages.greatingMessageFormat, chat.firstName ?? chat.username ?? "шановний"), parseMode: .html)
+    var userName = "шановний"
+    if let firstName = chat.firstName {
+        userName = firstName
+    } else if let userNick = chat.username {
+        userName = userNick
+    }
+    bot.sendMessageSync(chatId: .chat(chat.id), text: String(format: Messages.greatingMessageFormat, userName), parseMode: .html)
 }
 
 func sendUnrecogniseMessage(to chat: Chat) {
-    bot.sendMessageSync(chatId: .chat(chat.id), text: String(format: Messages.unrecogniseMessageFormat, chat.firstName ?? chat.username ?? "шановний"), parseMode: .html, replyMarkup: reStartButtonsMarkup)
+    var userName = "шановний"
+    if let firstName = chat.firstName {
+        userName = firstName
+    } else if let userNick = chat.username {
+        userName = userNick
+    }
+    bot.sendMessageSync(chatId: .chat(chat.id), text: String(format: Messages.unrecogniseMessageFormat, userName), parseMode: .html, replyMarkup: reStartButtonsMarkup)
 }
 
 func sendConfimMessage(to chat: Chat, session: Session) {
@@ -780,11 +795,23 @@ func sendConfimMessage(to chat: Chat, session: Session) {
 }
 
 func sendSuccessVolountersMessage(context: Context) {
-    context.respondAsync(String(format: Messages.finishedMessageFormat, context.message?.from?.firstName ?? context.message?.from?.username ?? "шановний"), parseMode: .html, replyMarkup: reStartButtonsMarkup)
+    var userName = "шановний"
+    if let firstName = context.message?.from?.firstName {
+        userName = firstName
+    } else if let userNick = context.message?.from?.username {
+        userName = userNick
+    }
+    context.respondAsync(String(format: Messages.finishedMessageFormat, userName), parseMode: .html, replyMarkup: reStartButtonsMarkup)
 }
 
 func sendSuccessHelpMessage(context: Context) {
-    context.respondAsync(String(format: Messages.finishedHelpMessageFormat, context.message?.from?.firstName ?? context.message?.from?.username ?? "шановний"), parseMode: .html, replyMarkup: reStartButtonsMarkup)
+    var userName = "шановний"
+    if let firstName = context.message?.from?.firstName {
+        userName = firstName
+    } else if let userNick = context.message?.from?.username {
+        userName = userNick
+    }
+    context.respondAsync(String(format: Messages.finishedHelpMessageFormat, userName), parseMode: .html, replyMarkup: reStartButtonsMarkup)
 }
 
 
