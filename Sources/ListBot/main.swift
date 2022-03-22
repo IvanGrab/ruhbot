@@ -463,7 +463,7 @@ func sendToDB(session: Session, context: Context) {
     if let _ = [HelpType.needAmmo, HelpType.needHumHelp, HelpType.needTransport, HelpType.needMedicines, HelpType.needClothes].firstIndex(of: session.helpType) {
         path = "bot/help-request"
     }
-    var request = URLRequest(url: URL(string: "http://ruhpidtrymky-env.eba-3nexsm5k.eu-central-1.elasticbeanstalk.com/" + path)!)
+    var request = URLRequest(url: URL(string: "https://korabel.rukhpidtrymky.org.ua/" + path)!)
     request.addValue("Bearer b7e6abddeb810910075037bf939d7a47f928f961c4778cc6cc0780ee7f3c4479", forHTTPHeaderField: "Authorization")
     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "POST"
@@ -472,7 +472,11 @@ func sendToDB(session: Session, context: Context) {
         comment = "Автомобіль: "
         comment += "\n" + (session.carInfo ?? "") + "\n"
     }
-    comment += (session.additionalComment ?? "")
+    
+    if let sessionComment = session.additionalComment {
+        comment += "\nКоментар:\n"
+        comment += sessionComment
+    }
     
     let json = [
         "pib": session.volounterName,
