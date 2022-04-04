@@ -79,18 +79,15 @@ class Session {
         let endpointUrl = urlForEndpoint(endpoint)
         
         // If parameters contain values of type InputFile, use  multipart/form-data for sending them.
-        var hasAttachments = false
         for valueOrNil in parameters.values {
             guard let value = valueOrNil else { continue }
             
             if value is InputFile {
-                hasAttachments = true
                 break
             }
             
             if let inputFileOrString = value as? InputFileOrString {
                 if case .inputFile = inputFileOrString {
-                    hasAttachments = true
                     break
                 }
             }
@@ -354,12 +351,12 @@ func onStart(context: Context) throws -> Bool {
     let keyboardMarkup = ReplyKeyboardMarkup.init(keyboard: startButtonsMarkup, resizeKeyboard: true, oneTimeKeyboard: false, selective: true)
     let bottomMenu = ReplyMarkup.replyKeyboardMarkup(keyboardMarkup)
     resetSession(for: context)
-    var userName = "шановний"
-    if let firstName = context.message?.from?.firstName {
-        userName = firstName
-    } else if let userNick = context.message?.from?.username {
-        userName = userNick
-    }
+//    var userName = "шановний"
+//    if let firstName = context.message?.from?.firstName {
+//        userName = firstName
+//    } else if let userNick = context.message?.from?.username {
+//        userName = userNick
+//    }
     context.respondAsync(Messages.greatingMessageFormat, parseMode: .html, replyMarkup: bottomMenu)
     return true
 }
@@ -753,22 +750,22 @@ func sendFallBackMessage(to chat: Chat, message: String = "Упс, щось пі
 }
 
 func sendGreating(to chat: Chat) {
-    var userName = "шановний"
-    if let firstName = chat.firstName {
-        userName = firstName
-    } else if let userNick = chat.username {
-        userName = userNick
-    }
+//    var userName = "шановний"
+//    if let firstName = chat.firstName {
+//        userName = firstName
+//    } else if let userNick = chat.username {
+//        userName = userNick
+//    }
     bot.sendMessageSync(chatId: .chat(chat.id), text: Messages.greatingMessageFormat, parseMode: .html)
 }
 
 func sendUnrecogniseMessage(to chat: Chat) {
-    var userName = "шановний"
-    if let firstName = chat.firstName {
-        userName = firstName
-    } else if let userNick = chat.username {
-        userName = userNick
-    }
+//    var userName = "шановний"
+//    if let firstName = chat.firstName {
+//        userName = firstName
+//    } else if let userNick = chat.username {
+//        userName = userNick
+//    }
     bot.sendMessageSync(chatId: .chat(chat.id), text: Messages.unrecogniseMessageFormat, parseMode: .html, replyMarkup: reStartButtonsMarkup)
 }
 
@@ -797,22 +794,22 @@ func sendConfimMessage(to chat: Chat, session: Session) {
 }
 
 func sendSuccessVolountersMessage(context: Context) {
-    var userName = "шановний"
-    if let firstName = context.message?.from?.firstName {
-        userName = firstName
-    } else if let userNick = context.message?.from?.username {
-        userName = userNick
-    }
+//    var userName = "шановний"
+//    if let firstName = context.message?.from?.firstName {
+//        userName = firstName
+//    } else if let userNick = context.message?.from?.username {
+//        userName = userNick
+//    }
     context.respondAsync(Messages.finishedHelpMessageFormat, parseMode: .html, replyMarkup: reStartButtonsMarkup)
 }
 
 func sendSuccessHelpMessage(context: Context) {
-    var userName = "шановний"
-    if let firstName = context.message?.from?.firstName {
-        userName = firstName
-    } else if let userNick = context.message?.from?.username {
-        userName = userNick
-    }
+//    var userName = "шановний"
+//    if let firstName = context.message?.from?.firstName {
+//        userName = firstName
+//    } else if let userNick = context.message?.from?.username {
+//        userName = userNick
+//    }
     context.respondAsync(Messages.finishedHelpMessageFormat, parseMode: .html, replyMarkup: reStartButtonsMarkup)
 }
 
